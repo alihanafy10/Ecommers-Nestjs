@@ -1,34 +1,17 @@
 import { z } from 'zod';
 
-import { Gender, UserType } from '../../../common/shared';
+import { Gender, generalRules } from '../../../common/shared';
 
 export const signUpBodyDto = z
   .object({
     userName: z.string().min(3).max(14),
     email: z.string().email(),
-    password: z
-      .string()
-      .min(6)
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/,
-        {
-          message:
-            'Minimum eight and maximum 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character',
-        },
-      ),
+    password: generalRules.password,
     confirmPassword: z.string(),
-    age: z.preprocess(
-      (val) => +val,
-      z.number().int().positive().max(100).min(10),
-    ),
+    age: generalRules.age,
     gender: z.nativeEnum(Gender),
-    phone: z
-      .string()
-      .regex(
-        /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/gm,
-        { message: 'phone number not valid' },
-      ),
-    userType: z.nativeEnum(UserType),
+    phone: generalRules.phone,
+
     country: z.string(),
     city: z.string(),
     postalCode: z.preprocess((val) => +val, z.number()),
@@ -49,3 +32,10 @@ export const signUpBodyDto = z
       });
     }
   });
+
+export const twoStageSignupWithGoogleDto = z.object({
+  _id:z.string(),
+  age: z.number().int().positive().max(100).min(10),
+  gender: z.nativeEnum(Gender),
+  phone: generalRules.phone,
+}).strict()

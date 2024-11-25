@@ -3,14 +3,19 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [`.${process.env.NODE_ENV}.env`, '.env']
+      envFilePath: [`.${process.env.NODE_ENV}.env`, '.env'],
     }),
     MongooseModule.forRoot(process.env.MONGOOSE_URI),
     AuthModule,
+    UserModule,
+    CategoriesModule
   ],
   controllers: [],
   providers: [],

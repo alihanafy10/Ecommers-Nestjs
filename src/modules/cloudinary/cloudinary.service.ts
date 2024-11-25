@@ -1,6 +1,6 @@
 
 import { Injectable } from '@nestjs/common';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import * as streamifier from 'streamifier';
 
 import { CloudinaryResponse } from './cloudinary-response';
@@ -12,10 +12,14 @@ interface CloudinaryObj{
 
 @Injectable()
 export class CloudinaryService {
-  uploadFile(file: Express.Multer.File,options: CloudinaryObj): Promise<CloudinaryResponse> {
+  //uploade image from device
+  uploadFile(
+    file: Express.Multer.File,
+    options: CloudinaryObj,
+  ): Promise<CloudinaryResponse> {
     return new Promise<CloudinaryResponse>((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-      options,
+      const uploadStream = cloudinary.uploader.upload_stream(
+        options,
         (error, result) => {
           if (error) return reject(error);
           resolve(result);
@@ -24,5 +28,16 @@ export class CloudinaryService {
 
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
+  }
+
+  //uploade online image form goole ..
+  async uploadeImage(imagePath: string, options: CloudinaryObj):Promise<UploadApiResponse> {
+    try {
+      // Upload the image
+      const result = await cloudinary.uploader.upload(imagePath, options);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

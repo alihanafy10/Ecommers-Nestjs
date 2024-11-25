@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { Gender, UserProviderType, UserType } from "../shared";
 import { Image } from "./interface/user.interface";
 
+
 @Schema({ timestamps: true })
 export class User {
   @Prop({
@@ -73,6 +74,16 @@ export class User {
     required: false,
   })
   image: Image;
+  @Prop({
+    type: String,
+    default: ''
+  })
+  otp: string;
+  @Prop({
+    type: Date,
+    default: null
+  })
+  endDateOtp: Date;
 }
 const UserSchema = SchemaFactory.createForClass(User)
 
