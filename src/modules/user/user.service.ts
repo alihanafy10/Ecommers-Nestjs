@@ -121,7 +121,10 @@ async profileInfo(authUser:any): Promise<User>{
  * @returns 
  */
 async deleteProfile(authUser:any): Promise<void>{
-  await this.userModel.findByIdAndUpdate(authUser._id, { isMarkedAsDeleted: true }, { new: true });
+//delete by update isMarkedAsDeleted  =>true
+  const data=await this.userModel.findByIdAndUpdate(authUser._id, { isMarkedAsDeleted: true }, { new: true });
+  if(!data)throw new BadRequestException('category not found')
+
 }
 
 

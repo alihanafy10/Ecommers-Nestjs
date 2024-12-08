@@ -1,6 +1,6 @@
 
-import { Injectable } from '@nestjs/common';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import { Inject, Injectable } from '@nestjs/common';
+import { v2 as cloudinary, ConfigOptions, UploadApiResponse } from 'cloudinary';
 import * as streamifier from 'streamifier';
 
 import { CloudinaryResponse } from './cloudinary-response';
@@ -12,6 +12,30 @@ interface CloudinaryObj{
 
 @Injectable()
 export class CloudinaryService {
+  constructor(@Inject('CLOUDINARY') private readonly cloudinaryProvider: ConfigOptions) {
+    cloudinary.config(cloudinaryProvider); 
+  }
+
+  async deleteResourcesByPrefix(prefix: string): Promise<any> {
+    return cloudinary.api.delete_resources_by_prefix(prefix)
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  async deleteFolder(folderPath: string): Promise<any> {
+    return cloudinary.api.delete_folder(folderPath)
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  }
+
   //uploade image from device
   uploadFile(
     file: Express.Multer.File,
