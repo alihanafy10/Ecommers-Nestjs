@@ -1,13 +1,11 @@
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
-import * as paginate from "mongoose-paginate-v2";
-
 
 import { Image } from "./interface/user.interface";
+import mongoose from "mongoose";
 
 
-@Schema({ timestamps: true,toJSON:{virtuals:true},toObject:{virtuals:true},id:false })
-export class SubCategories {
+@Schema({ timestamps: true })
+export class Brand {
   @Prop({
     type:String,
     required: true,
@@ -54,17 +52,14 @@ export class SubCategories {
     required: true,
   })
   categoryId: mongoose.Schema.Types.ObjectId;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "SubCategories",
+    required: true,
+  })
+  subCategoryId: mongoose.Schema.Types.ObjectId;
 }
-const subCategoriesSchema = SchemaFactory.createForClass(SubCategories)
+const brandSchema = SchemaFactory.createForClass(Brand)
 
-//add plugen to do pagination
-subCategoriesSchema.plugin(paginate)
-
-//add virtual populate
-subCategoriesSchema.virtual('brand',{
-  ref: 'Brand',
-  localField: '_id',
-  foreignField: 'subCategoryId',
-})
-
-export const SubCategoriesModel=MongooseModule.forFeature([{name:SubCategories.name,schema:subCategoriesSchema}])
+export const BrandModel=MongooseModule.forFeature([{name:Brand.name,schema:brandSchema}])

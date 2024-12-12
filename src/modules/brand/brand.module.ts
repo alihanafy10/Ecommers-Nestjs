@@ -3,15 +3,17 @@ import { JwtService } from "@nestjs/jwt";
 
 
 import { CloudinaryModule } from "../cloudinary/cloudinary.module";
-import { CategoriesController } from "./categories.controller";
-import { CategoriesService } from "./categories.service";
+
 import {   BrandModel, CategoriesModel, SubCategoriesModel, UserModel } from "../../common/schemas";
-import { ApiFeatures, CheakExisit } from "../../services";
+import { CheakExisit } from "../../services";
+import { BrandController } from "./brand.controller";
+import { BrandService } from "./brand.service";
+
 
 
 @Module({
   imports: [CloudinaryModule,CategoriesModel,UserModel,SubCategoriesModel,BrandModel],
-  controllers: [CategoriesController],
-  providers: [CategoriesService,JwtService,CheakExisit,ApiFeatures],
+  controllers: [BrandController],
+  providers: [BrandService,JwtService,CheakExisit],
 })
-export class CategoriesModule{}
+export class BrandModule{}

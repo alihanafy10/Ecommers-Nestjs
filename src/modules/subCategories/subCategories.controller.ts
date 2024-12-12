@@ -1,14 +1,14 @@
 import {  Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { Request, Response } from "express";
 
 import { subCategoriesService } from "./subCategories.service";
 import { Auth } from "../../common/decorator";
 import { UserType } from "../../common/shared";
 import { ZodValidationPipe } from "../../common/pipes";
 import { createFileUploadPipe } from "../../common/utils";
-import { createSubCategoriesBodyDto, getSubCategorieQueryDto, updateSubCategoriesBodyDto, updateSubCategoriesParamsDto } from "./dto";
-import { TcreateSubCategoriesBodyDto, TgetSubCategorieQueryDto, TupdateSubCategoriesBodyDto, TupdateSubCategoriesParamsDto } from "../../common/types";
-import { Request, Response } from "express";
+import { createSubCategoriesBodyDto, getAllSubCategoriesQueryDto, getSubCategorieQueryDto, updateSubCategoriesBodyDto, updateSubCategoriesParamsDto } from "./dto";
+import { TcreateSubCategoriesBodyDto, TgetAllSubCategoriesQueryDto, TgetSubCategorieQueryDto, TupdateSubCategoriesBodyDto, TupdateSubCategoriesParamsDto } from "../../common/types";
 
 
 
@@ -58,6 +58,16 @@ export class subCategoriesController {
         @Res() res: Response,
       ): Promise<Response> {
         const data = await this.subcategoriesService.getSubCategorie(query);
+        return res.status(200).json({ message:'success',data });
+      }
+
+      @Get('allSubCategories')
+      @Auth([ UserType.ADMIN , UserType.BUYER])
+      async getAllSubCategories(
+        @Query(new ZodValidationPipe(getAllSubCategoriesQueryDto)) query:TgetAllSubCategoriesQueryDto,
+        @Res() res: Response,
+      ): Promise<Response> {
+        const data = await this.subcategoriesService.getAllSubCategorie(query);
         return res.status(200).json({ message:'success',data });
       }
 

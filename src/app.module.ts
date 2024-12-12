@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { SubCategoriesModule } from './modules/subCategories/subCategories.module';
+import { BrandModule } from './modules/brand/brand.module';
 
 
 @Module({
@@ -17,7 +18,8 @@ import { SubCategoriesModule } from './modules/subCategories/subCategories.modul
     AuthModule,
     UserModule,
     CategoriesModule,
-    SubCategoriesModule
+    SubCategoriesModule,
+    BrandModule
   ],
   controllers: [],
   providers: [],

@@ -12,6 +12,7 @@ export const getCategorieQueryDto = z
       }).optional(),
   })
   .strict();
+  
 export const getAllCategorieQueryDto = z
   .object({
     page:z.preprocess((val) => +val, z.number().min(1).max(50)).optional(),

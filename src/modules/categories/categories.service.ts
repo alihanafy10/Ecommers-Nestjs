@@ -3,12 +3,12 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, PaginateModel } from "mongoose";
 import slugify from "slugify";
 import { nanoid } from "nanoid";
+import { Request } from "express";
 
-import { Categories, SubCategories } from "../../common/schemas";
+import { Brand, Categories, SubCategories } from "../../common/schemas";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { TcreateCategoriesBodyDto, TgetAllCategorieQueryDto, TgetCategorieQueryDto, TupdateCategoriesBodyDto, TupdateCategoriesParamsDto } from "../../common/types";
 import { ApiFeatures, CheakExisit } from "../../services";
-import { Request } from "express";
 
 
 @Injectable()
@@ -18,6 +18,7 @@ export class CategoriesService {
     constructor(
         @InjectModel(Categories.name) private categoriesModel: PaginateModel<Categories>,
         @InjectModel(SubCategories.name) private subCategoriesModel: Model<SubCategories>,
+        @InjectModel(Brand.name) private brandModel: Model<Brand>,
         @Inject() private readonly apiFeatures:ApiFeatures,
         private readonly cloudinaryService: CloudinaryService,
         private readonly cheakExisit:CheakExisit
@@ -188,7 +189,7 @@ return data
        */
       async deleteCategories(_id:string):Promise<void>{
         //delete categories
-        const data=await this.categoriesModel.findByIdAndDelete(_id);
+        const data:Categories|any=await this.categoriesModel.findByIdAndDelete(_id);
         if(!data)throw new BadRequestException('categorie not found')
 
           //delete image from cloudinary
@@ -200,6 +201,8 @@ return data
           await this.subCategoriesModel.deleteMany({categoryId:data._id})
           
           //todo delete relatev Brand from db
+          await this.brandModel.deleteMany({categoryId:data._id})
+
           //todo delete relatev product from db
           
       }

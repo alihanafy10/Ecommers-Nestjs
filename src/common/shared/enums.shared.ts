@@ -12,3 +12,9 @@ export enum UserProviderType {
     SYSTEM = 'system',
     GOOGLE = 'google',
 }
+
+export enum ProductBadges{
+    NEW= "New",
+    SALE= "Sale",
+    BEST_SELLER= "Best Seller",
+}

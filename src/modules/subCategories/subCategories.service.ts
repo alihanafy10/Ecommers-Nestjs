@@ -1,14 +1,14 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import slugify from "slugify";
 import { nanoid } from "nanoid";
 import { Request } from "express";
 
-import {  Categories, SubCategories } from "../../common/schemas";
+import {  Brand, Categories, SubCategories } from "../../common/schemas";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
-import {  TcreateSubCategoriesBodyDto, TgetSubCategorieQueryDto, TupdateSubCategoriesBodyDto, TupdateSubCategoriesParamsDto } from "../../common/types";
-import { CheakExisit } from "../../services";
+import {  TcreateSubCategoriesBodyDto, TgetAllSubCategoriesQueryDto, TgetSubCategorieQueryDto, TupdateSubCategoriesBodyDto, TupdateSubCategoriesParamsDto } from "../../common/types";
+import { ApiFeatures, CheakExisit } from "../../services";
 
 
 @Injectable()
@@ -18,6 +18,8 @@ export class subCategoriesService {
     constructor(
         @InjectModel(SubCategories.name) private subCategoriesModel: Model<SubCategories>,
         @InjectModel(Categories.name) private categoriesModel: Model<Categories>,
+        @InjectModel(Brand.name) private brandModel: Model<Brand>,
+        @Inject() private readonly apiFeatures:ApiFeatures,
         private readonly cloudinaryService: CloudinaryService,
         private readonly cheakExisit:CheakExisit
       ) {}
@@ -170,6 +172,22 @@ subCategories.slug=slug
         return data
       }
 
+       /**
+       * @param {TgetAllSubCategoriesQueryDto} query
+       * 
+       * @returns {SubCategories[]}
+       */
+       async getAllSubCategorie(query:TgetAllSubCategoriesQueryDto):Promise<SubCategories[]>{
+        const subCategorie =await this.apiFeatures.filter_sort_pagination(
+          this.subCategoriesModel,
+           query,
+           undefined,
+          "brand"
+          )
+
+        return subCategorie
+      }
+
       /**
        * 
        * @param {string}_id 
@@ -186,6 +204,8 @@ subCategories.slug=slug
 
 
           //todo delete relatev Brand from db
+          await this.brandModel.deleteMany({subCategoryId:data._id})
+          
           //todo delete relatev product from db
       }
 }
