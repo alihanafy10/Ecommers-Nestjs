@@ -5,7 +5,7 @@ import slugify from "slugify";
 import { nanoid } from "nanoid";
 import { Request } from "express";
 
-import { Brand, Categories, SubCategories } from "../../common/schemas";
+import { Brand, Categories, SubCategories,Product } from "../../common/schemas";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { TcreateCategoriesBodyDto, TgetAllCategorieQueryDto, TgetCategorieQueryDto, TupdateCategoriesBodyDto, TupdateCategoriesParamsDto } from "../../common/types";
 import { ApiFeatures, CheakExisit } from "../../services";
@@ -19,6 +19,7 @@ export class CategoriesService {
         @InjectModel(Categories.name) private categoriesModel: PaginateModel<Categories>,
         @InjectModel(SubCategories.name) private subCategoriesModel: Model<SubCategories>,
         @InjectModel(Brand.name) private brandModel: Model<Brand>,
+        @InjectModel(Product.name) private productModel: Model<Product>,
         @Inject() private readonly apiFeatures:ApiFeatures,
         private readonly cloudinaryService: CloudinaryService,
         private readonly cheakExisit:CheakExisit
@@ -204,6 +205,9 @@ return data
           await this.brandModel.deleteMany({categoryId:data._id})
 
           //todo delete relatev product from db
+          await this.productModel.deleteMany({categoryId:data._id})
+          
+          //todo delete relatev wachlist from db
           
       }
       

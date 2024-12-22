@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { createBrandBodyDto, getBrandQueryDto, updateBrandBodyDto, updateBrandParamsDto } from '../../modules/brand/dto';
+import { createBrandBodyDto, getAllBrandQueryDto, getAllBrandSCNQueryDto, getBrandQueryDto, updateBrandBodyDto, updateBrandParamsDto } from '../../modules/brand/dto';
 
 
   
@@ -8,4 +8,7 @@ import { createBrandBodyDto, getBrandQueryDto, updateBrandBodyDto, updateBrandPa
   export type TupdateBrandBodyDto = z.infer<typeof updateBrandBodyDto>;
   export type TupdateBrandParamsDto = z.infer<typeof updateBrandParamsDto>;
   export type TgetBrandQueryDto = z.infer<typeof getBrandQueryDto>;
+  export type TgetAllBrandQueryDto = z.infer<typeof getAllBrandQueryDto>;
+  export type TgetAllBrandSCNQueryDto = z.infer<typeof getAllBrandSCNQueryDto>;
+ 
  

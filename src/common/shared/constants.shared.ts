@@ -6,6 +6,7 @@ export const extentions = {
   images: /(png|jpeg|jpg|gif|svg\+xml)/,
 };
 
+//general rules for zod validation
 export const generalRules = {
   password: z
     .string()
@@ -27,9 +28,14 @@ export const generalRules = {
     (val) => +val,
     z.number().int().positive().max(100).min(10),
   ),
+  IdesRole:z.string().refine(objectIdRule, {
+    message: 'Invalid ObjectId',
+  }),
 };
 
 //validate _id from monngose
  export function objectIdRule(value:any) {
   return Types.ObjectId.isValid(value)?true:false
 }
+
+

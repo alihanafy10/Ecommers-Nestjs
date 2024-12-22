@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { SubCategoriesModule } from './modules/subCategories/subCategories.module';
 import { BrandModule } from './modules/brand/brand.module';
+import { ProductModule } from './modules/product/product.module';
 
 
 @Module({
@@ -19,7 +20,8 @@ import { BrandModule } from './modules/brand/brand.module';
     UserModule,
     CategoriesModule,
     SubCategoriesModule,
-    BrandModule
+    BrandModule,
+    ProductModule
   ],
   controllers: [],
   providers: [],

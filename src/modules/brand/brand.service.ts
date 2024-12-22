@@ -1,14 +1,15 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import slugify from "slugify";
 import { nanoid } from "nanoid";
 
 
-import {  Brand, Categories, SubCategories } from "../../common/schemas";
+import {  Brand, Product, SubCategories } from "../../common/schemas";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
-import { CheakExisit } from "../../services";
-import { TcreateBrandBodyDto, TgetBrandQueryDto, TupdateBrandBodyDto, TupdateBrandParamsDto } from "../../common/types/brand.types";
+import { ApiFeatures, CheakExisit } from "../../services";
+import { TcreateBrandBodyDto, TgetAllBrandQueryDto, TgetBrandQueryDto, TupdateBrandBodyDto, TupdateBrandParamsDto } from "../../common/types";
+
 
 
 @Injectable()
@@ -17,8 +18,9 @@ export class BrandService {
     
     constructor(
         @InjectModel(SubCategories.name) private subCategoriesModel: Model<SubCategories>,
-        @InjectModel(Categories.name) private categoriesModel: Model<Categories>,
+        @InjectModel(Product.name) private productModel: Model<Product>,
         @InjectModel(Brand.name) private brandModel: Model<Brand>,
+        @Inject() private readonly apiFeatures:ApiFeatures,
         private readonly cloudinaryService: CloudinaryService,
         private readonly cheakExisit:CheakExisit
       ) {}
@@ -181,6 +183,60 @@ brand.slug=slug
       return data
     }
 
+
+     /**
+           * @param {TgetAllBrandQueryDto} query
+           * 
+           * @returns {Brand[]}
+           */
+           async getAllBrand(query:TgetAllBrandQueryDto):Promise<Brand[]>{
+            const subCategorie =await this.apiFeatures.filter_sort_pagination(
+              this.brandModel,
+               query,
+               undefined,
+              "product"
+              )
     
+            return subCategorie
+          }
+
+
+     /**
+           * @param {TgetAllBrandQueryDto} query
+           * 
+           * @returns {Brand[]}
+           */
+           async getAllBrandSCN(filters:{name?:string,slug?:string,subCategoryId?:any,categoryId?:any}):Promise<Brand[]>{
+           const query:any={}
+           if(filters.name)query.name = filters.name
+           if(filters.slug)query.slug = filters.slug
+           if(filters.categoryId)query.categoryId=filters.categoryId
+           if(filters.subCategoryId)query.subCategoryId=filters.subCategoryId
+
+           const brands=await this.brandModel.find(query).populate([{path:"subCategoryId"},{path:"categoryId"}])
+           return brands
+          }
+
+
+          /**
+       * 
+       * @param {string}_id 
+       */
+      async deleteBrand(_id:string):Promise<void>{
+        //delete categories
+        const data:Brand|any=await this.brandModel.findByIdAndDelete(_id).populate([{path:"subCategoryId"},{path:"categoryId"}]);
+        if(!data)throw new BadRequestException('brand not found')
+
+          //delete image from cloudinary
+          const path=`${process.env.UPLOADE_FOLDER}/Categories/${data.categoryId.customId}/SubCategories/${data.subCategoryId.customId}/Brand/${data.customId}`
+          await this.cloudinaryService.deleteResourcesByPrefix(path)
+          await this.cloudinaryService.deleteFolder(path)
+
+
+          // delete relatev product from db
+          await this.productModel.deleteMany({brandId:data._id})
+
+//todo delete relatev wachlist from db
+      }
  
 }

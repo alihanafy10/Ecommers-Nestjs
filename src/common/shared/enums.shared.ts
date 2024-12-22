@@ -18,3 +18,8 @@ export enum ProductBadges{
     SALE= "Sale",
     BEST_SELLER= "Best Seller",
 }
+
+export enum DiscountType {
+    PERCENT= "percent",
+    FIXED= "fixed",
+  };
