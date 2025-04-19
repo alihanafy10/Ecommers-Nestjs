@@ -17,11 +17,10 @@ export class CartController {
   @Post('')
      
       @Auth([ UserType.ADMIN,UserType.BUYER])
-      async createBrand(
+      async createCart(
           @Req() req: Request,
           @Res() res: Response,
           @Body(new ZodValidationPipe(addToCartBodyDto)) body:TaddToCartBodyDto ,
-          @UploadedFile() file: Express.Multer.File,
         ): Promise<Response> {
        
   

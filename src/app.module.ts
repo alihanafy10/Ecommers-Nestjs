@@ -9,6 +9,7 @@ import { SubCategoriesModule } from './modules/subCategories/subCategories.modul
 import { BrandModule } from './modules/brand/brand.module';
 import { ProductModule } from './modules/product/product.module';
 import { CartModule } from './modules/cart/cart.module';
+import { CouponModule } from './modules/coupon/coupon.module';
 
 
 @Module({
@@ -23,7 +24,8 @@ import { CartModule } from './modules/cart/cart.module';
     SubCategoriesModule,
     BrandModule,
     ProductModule,
-    CartModule
+    CartModule,
+    CouponModule
   ],
   controllers: [],
   providers: [],
