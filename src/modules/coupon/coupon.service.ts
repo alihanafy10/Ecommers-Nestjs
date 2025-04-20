@@ -3,9 +3,10 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Request } from "express";
 import  { Model } from "mongoose";
 
-import { TcreateCouponBodyDto, TgetAllCouponQueryDto, TpatchCouponParamsDto, TupdateCouponBodyDto } from "../../common/types/coupon.types";
+
 import { Coupon, LogsCoupon, User } from "../../common/schemas";
 import { CheakExisit } from "../../services";
+import { TcreateCouponBodyDto, TgetAllCouponQueryDto, TpatchCouponParamsDto, TupdateCouponBodyDto } from "../../common/types";
 
 @Injectable()
 export class CouponService{
@@ -77,7 +78,7 @@ constructor(
         return data
         
     }
-
+    
     /**
      * 
      * @param {boolean}isEnable 

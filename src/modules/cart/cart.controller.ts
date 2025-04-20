@@ -66,6 +66,6 @@ export class CartController {
             @Res() res: Response,
         ){
              const data=await this.cartService.getCart(req);
-            return res.status(201).json({ message: 'successfully',data});
+            return res.status(200).json({ message: 'successfully',data});
         }
 }

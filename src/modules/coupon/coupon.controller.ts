@@ -5,8 +5,8 @@ import { CouponService } from "./coupon.service";
 import { Auth } from "../../common/decorator";
 import { UserType } from "../../common/shared";
 import { ZodValidationPipe } from "../../common/pipes";
-import { TcreateCouponBodyDto, TgetAllCouponQueryDto, TgetCouponParamsDto, TpatchCouponBodyDto, TpatchCouponParamsDto, TupdateCouponBodyDto } from "../../common/types/coupon.types";
 import { createCouponBodyDto, getAllCouponQueryDto, getCouponParamsDto, patchCouponBodyDto, patchCouponParamsDto, updateCouponBodyDto } from "./dto";
+import { TcreateCouponBodyDto, TgetAllCouponQueryDto, TgetCouponParamsDto, TpatchCouponBodyDto, TpatchCouponParamsDto, TupdateCouponBodyDto } from "../../common/types";
 
 @Controller('coupon')
 export class CouponController {
@@ -29,7 +29,7 @@ export class CouponController {
     @Param(new ZodValidationPipe(getCouponParamsDto)) Param: TgetCouponParamsDto,
   ): Promise<Response> {
     const data = await this.couponService.getCouponById( Param._id);
-    return res.status(201).json({ message: 'success', data });
+    return res.status(200).json({ message: 'success', data });
   }
 
   @Get('')
@@ -39,7 +39,7 @@ export class CouponController {
     @Query(new ZodValidationPipe(getAllCouponQueryDto)) query: TgetAllCouponQueryDto,
   ): Promise<Response> {
     const data = await this.couponService.getAllCoupon( query);
-    return res.status(201).json({ message: 'success', data });
+    return res.status(200).json({ message: 'success', data });
   }
 
   @Patch(':_id')

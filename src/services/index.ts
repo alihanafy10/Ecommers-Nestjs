@@ -1,2 +1,4 @@
 export * from './cheak-name-exisit.services'
 export * from './api-features.services'
+export * from './validateCoupon'
+export * from './qrCode.services'
