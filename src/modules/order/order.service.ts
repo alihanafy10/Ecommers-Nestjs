@@ -1,12 +1,12 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { Request } from "express";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 
-import { TcreateOrderBodyDto } from "../../common/types";
+import { TcreateOrderBodyDto, TgetAllOredrQueryDto } from "../../common/types";
 import { Address, Cart, Coupon, Order, Product, UsersCoupon } from "../../common/schemas";
 import { calculateCartTotale } from "../../common/utils";
-import { QrCodeService, ValidateCoupon } from "../../services";
+import { ApiFeatures, QrCodeService, ValidateCoupon } from "../../services";
 import { OrderStatusType, PaymentMethodType } from "../../common/shared";
 import { DateTime } from "luxon";
 
@@ -18,8 +18,9 @@ export class OredrService {
     @InjectModel(Order.name) private orderModel: Model<Order>,
     @InjectModel(Product.name) private productModel: Model<Product>,
     @InjectModel(Coupon.name) private couponModel: Model<Coupon>,
-    private readonly validateCoupon: ValidateCoupon,
-    private readonly qrCodeService: QrCodeService,
+    @Inject() private readonly apiFeatures:ApiFeatures,
+    @Inject() private readonly validateCoupon: ValidateCoupon,
+    @Inject() private readonly qrCodeService: QrCodeService,
   ) {}
 
   /**
@@ -129,4 +130,84 @@ export class OredrService {
     //return
     return { order: orderObj ,qrCodeDataURL};
   }
+
+  /**
+   * 
+   * @param {string} orderId 
+   * @param {any}req 
+   * 
+   * @returns {Order}
+   */
+  async cancelOredr(orderId:string,req:Request|any):Promise<Order>{
+    const userId = req.authUser._id;
+     //get order
+  const order:Order|any = await this.orderModel.findOne({
+    _id:orderId,
+    userId,
+    orderStatus: { $in: [OrderStatusType.CONFIRMED,OrderStatusType.PENDING,OrderStatusType.PLACED] },
+  });
+  if(!order)throw new BadRequestException("order not found")
+    //check diff date
+  const orderDate = DateTime.fromJSDate(order.createdAt);
+  const currentDate = DateTime.now();
+  const diff = Math.ceil(currentDate.diff(orderDate, "days").days);
+  if(diff>3)throw new BadRequestException("cannot cancel order after 3 days")
+     //update orderStatus to canceld
+  order.orderStatus = OrderStatusType.CANCELLD
+  order.cancelledAt = DateTime.now();
+  order.cancelledBy = userId;
+   await this.orderModel.updateOne({ _id:orderId }, order);
+    //update product
+  for (const product of order.products) {
+    await this.productModel.updateOne(
+      { _id: product.productId },
+      { $inc: { stock: product.quantity } }
+    );
+  }
+  return order
+  }
+
+   /**
+   * 
+   * @param {string} orderId 
+   * @param {any}req 
+   * 
+   * @returns {Order}
+   */
+  async deliveredOredr(orderId:string,req:Request|any):Promise<Order>{
+    const userId = req.authUser._id;
+     //get order
+  const order:Order|any = await this.orderModel.findOne({
+    _id:orderId,
+    userId,
+    orderStatus: { $in: [OrderStatusType.CONFIRMED,OrderStatusType.PLACED] },
+  });
+  if(!order)throw new BadRequestException("order not found")
+    
+   //update orderStatus to canceld
+  order.orderStatus = OrderStatusType.DELIVERED;
+  order.deliveredAt = DateTime.now();
+  
+  await this.orderModel.updateOne({_id:orderId},order)
+  return order
+  }
+
+  /**
+   * 
+   * @param {TgetAllOredrQueryDto}query 
+   * @returns {Order[]}
+   */
+  async getAllOredrs(query:TgetAllOredrQueryDto):Promise<Order[]>{
+    
+    const order =await this.apiFeatures.filter_sort_pagination(
+      this.orderModel,
+       query,
+       undefined,
+      [{path:"couponId"},{path:"addressId"},{path:"userId",select:"-password"},{path:"products.productId"}]
+      )
+
+    return order
+  }
+
+  
 }

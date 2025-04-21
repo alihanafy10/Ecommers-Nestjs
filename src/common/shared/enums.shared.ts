@@ -45,3 +45,9 @@ export enum DiscountType {
     DROPPED= "dropped",
     ONWAY="oneway",
   }
+
+  export enum ReviewStatus  {
+    PENDING= 'pending',
+    ACCEPTD= 'accepted',
+    REJECTED= 'rejected',
+  }

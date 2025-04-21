@@ -11,6 +11,7 @@ import { AppliedDiscount, Image } from '../../common/schemas/interface';
 import { ApiFeatures, CheakExisit } from '../../services';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { calculateAPPliesPrice } from '../../common/utils';
+import { ReviewStatus } from 'src/common/shared';
 
 
 @Injectable()
@@ -231,14 +232,22 @@ const { secure_url } = await this.cloudinaryService.uploadFile(
       this.productModel,
        query,
        undefined,
-      [{path:"brandId"},{path:"subCategoryId"},{path:"categoryId"},]
+      [
+        {path:"brandId"},
+        {path:"subCategoryId"},
+        {path:"categoryId"},
+        {path:"review",match: { reviewStatus: ReviewStatus.ACCEPTD }}]
       )
 
     return product
   
   }
 
-
+/**
+ * 
+ * @param {string}_id
+ * @returns {void} 
+ */
   async deleteProduct(_id:string):Promise<void>{
     //delete categories
     const data:Product|any=await this.productModel.findByIdAndDelete(_id).populate([{path:"subCategoryId"},{path:"categoryId"},{path:"brandId"}]);

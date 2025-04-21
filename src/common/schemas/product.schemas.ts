@@ -9,7 +9,7 @@ import { calculateAPPliesPrice } from "../utils";
 
 
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true ,toJSON: { virtuals: true },toObject:{ virtuals: true }})
 export class Product {
   @Prop({
     type:String,
@@ -130,5 +130,12 @@ const productSchema = SchemaFactory.createForClass(Product)
 
 //add plugen to do pagination
 productSchema.plugin(paginate)
+
+//virtual populate
+productSchema.virtual("review", {
+  ref: "Review", // The model to use
+  localField: "_id", // Find people where `localField`
+  foreignField: "productId", // is equal to `foreignField`
+});
 
 export const ProductModel=MongooseModule.forFeature([{name:Product.name,schema:productSchema}])

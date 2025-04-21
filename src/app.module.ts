@@ -11,6 +11,7 @@ import { ProductModule } from './modules/product/product.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { OrderModule } from './modules/order/order.module';
+import { ReviewModule } from './modules/review/review.module';
 
 
 @Module({
@@ -27,7 +28,8 @@ import { OrderModule } from './modules/order/order.module';
     ProductModule,
     CartModule,
     CouponModule,
-    OrderModule
+    OrderModule,
+    ReviewModule
   ],
   controllers: [],
   providers: [],

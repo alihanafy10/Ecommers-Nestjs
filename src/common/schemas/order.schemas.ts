@@ -1,6 +1,8 @@
 
 import { MongooseModule, Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
+import * as paginate from "mongoose-paginate-v2";
+
 import { Products } from "./interface";
 import { OrderStatusType, PaymentMethodType } from "../shared";
 
@@ -118,7 +120,8 @@ const orderSchema = SchemaFactory.createForClass(Order)
 
 
 
- 
+ //add plugen to do pagination
+ orderSchema.plugin(paginate)
 
 
 export const OrderModel=MongooseModule.forFeature([{name:Order.name,schema:orderSchema}])
